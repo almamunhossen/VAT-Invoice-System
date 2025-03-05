@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAT Invoice System</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- QR Code Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <!-- PDF Export Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div id="invoice" class="invoice-container">
+            <!-- Header Section -->
+            <div class="header">
+                <div class="company-info">
+                    <div class="logo" id="logo">
+                        <span>LOGO</span>
+                        <img id="logoImg">
+                    </div>
+                    <div>
+                        <h1>شركة عبدالله محمد الزهراني للوقود</h1>
+                        <p>Jeddah, KSA  .جدة، المملكة العربية السعودية</p>
+                        <p>C.R: سجل تجاري: 4030526866</p>
+                        <p>VAT No: الر قم الضريبي: 311837254300003</p>
+                    </div>
+                </div>
+                <div class="invoice-title">
+                    <h2>VAT INVOICE</h2>
+                    <h3>فاتورة ضريبية</h3>
+                </div>
+            </div>
+
+            <!-- Invoice Details -->
+            <div class="invoice-details">
+                <div class="customer-details">
+                    <div class="form-group">
+                        <label for="customerName">Customer Name / اسم العميل</label>
+                        <input type="text" id="customerName" placeholder="Enter customer name">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerAddress">Address / العنوان</label>
+                        <input type="text" id="customerAddress" placeholder="Enter customer address">
+                    </div>
+                    <div class="form-group">
+                        <label for="vatNumber">VAT No. / رقم ضريبة القيمة المضافة</label>
+                        <input type="text" id="vatNumber" placeholder="Enter VAT number">
+                    </div>
+                </div>
+                <div class="invoice-info">
+                    <div class="form-group">
+                        <label for="invoiceNumber">Invoice No. / رقم الفاتورة</label>
+                        <input type="text" id="invoiceNumber" placeholder="Enter invoice number" value="INV-00">
+                    </div>
+                    <div class="form-group">
+                        <label for="invoiceDate">Invoice Date / تاريخ الفاتورة</label>
+                        <input type="datetime-local" id="invoiceDate">
+                        <!-- <input type="date" id="invoiceDate">  -->
+                        
+                        
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invoice Items -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Invoice Items / بنود الفاتورة</h3>
+                </div>
+                <div class="card-content">
+                    <div class="table-container">
+                        <table id="invoiceTable">
+                            <thead>
+                                <tr>
+                                    <th>No.رقم</th>
+                                    <th class="description-cell">Description / الوصف</th>
+                                    <th class="text-center">Qty / الكمية</th>
+                                    <th class="text-center">Price / السعر</th>
+                                    <th class="text-center">Amount / المبلغ</th>
+                                    <th class="text-center no-print">
+                                        <button class="btn btn-outline btn-sm" id="addItemBtn">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round" class="icon">
+                                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                            Add
+                                        </button>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody id="invoiceItems">
+                                <!-- Items will be added here dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Totals and QR Code -->
+            <div class="totals-section">
+                <div class="qr-section">
+                    <canvas id="qrCode" width="150" height="150"></canvas>
+                </div>
+                <div class="totals-card">
+                    <div class="totals-content">
+                        <div class="total-row">
+                            <span>Subtotal / المجموع الفرعي</span>
+                            <span id="subtotal">0.00</span>
+                        </div>
+                        <div class="total-row">
+                            <span>VAT (15%) / ضريبة القيمة المضافة</span>
+                            <span id="vat">0.00</span>
+                        </div>
+                        <hr>
+                        <div class="total-row grand-total">
+                            <span>Total / الإجمالي</span>
+                            <span id="total">0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="invoice-footer">
+                <p>Thank you for your business / شكرا لتعاملك معنا</p>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons no-print">
+            <button class="btn btn-primary" id="printBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                    <rect x="6" y="14" width="12" height="8"></rect>
+                </svg>
+                Print Invoice
+            </button>
+            <button class="btn btn-outline" id="pdfBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export to PDF
+            </button>
+            <div class="seller-select">
+                <label for="sellerSelect">Seller Name</label>
+                <select id="sellerSelect">
+                    <option value="Al Mamun Hossen">Saiful</option>
+                    <option value="Saiful">Ahmed</option>
+                </select>
+                <button class="btn btn-outline" id="generateQRBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="icon">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <rect x="8" y="8" width="8" height="8"></rect>
+                        <line x1="12" y1="3" x2="12" y2="8"></line>
+                        <line x1="3" y1="12" x2="8" y2="12"></line>
+                        <line x1="12" y1="16" x2="12" y2="21"></line>
+                        <line x1="16" y1="12" x2="21" y2="12"></line>
+                    </svg>
+                    Generate QR Code
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+<footer class="action-buttons no-print">
+    <p>Design and Developed by > <a href="http://www.almamunhossen.com" target="_blank" rel="noopener noreferrer">Al
+            Mamun Hossen</a></p>
+</footer>
+
+</html>

@@ -251,52 +251,17 @@ function exportToPDF() {
 
 
 // ---------------head Logo------------
+// Get the current date and time
+const now = new Date();
 
-const logoDiv = document.getElementById("logo");
-const logoImg = document.getElementById("logoImg");
+// Format the date and time to YYYY-MM-DDTHH:MM
+const year = now.getFullYear();
+const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+const day = String(now.getDate()).padStart(2, '0');
+const hours = String(now.getHours()).padStart(2, '0');
+const minutes = String(now.getMinutes()).padStart(2, '0');
 
-// Function to load saved image from LocalStorage
-function loadSavedLogo() {
-  const savedLogo = localStorage.getItem("logoImage");
-  if (savedLogo) {
-    logoImg.src = savedLogo;
-    logoImg.style.display = "block"; // Show saved image
-    logoDiv.querySelector("span").style.display = "none"; // Hide text
-  }
-}
+const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
 
-// Load saved logo on page load
-window.onload = loadSavedLogo;
-
-// Drag & Drop events
-logoDiv.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  logoDiv.style.borderColor = "blue";
-});
-
-logoDiv.addEventListener("dragleave", () => {
-  logoDiv.style.borderColor = "#ccc";
-});
-
-logoDiv.addEventListener("drop", (e) => {
-  e.preventDefault();
-  logoDiv.style.borderColor = "#ccc";
-
-  const file = e.dataTransfer.files[0];
-  if (file && file.type.startsWith("image/")) {
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      const imageData = event.target.result;
-      logoImg.src = imageData;
-      logoImg.style.display = "block";
-      logoDiv.querySelector("span").style.display = "none";
-
-      // Save image in LocalStorage
-      localStorage.setItem("logoImage", imageData);
-    };
-    reader.readAsDataURL(file);
-  } else {
-    alert("Please drop a valid image file.");
-  }
-});
-
+// Set the value of the input element
+document.getElementById('invoiceDate').value = formattedDateTime;

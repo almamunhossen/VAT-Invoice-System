@@ -14,6 +14,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" integrity="sha512-BNaRQnYJYiPSqHHDb58B0yaPfCu+Wgds8Gp/gU33kqBtgNS4tSPHuGibyoeqMV/TJlSKda6FXzoEyYGjTe+vXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.debug.js" integrity="sha384-NaWTHo/8YCBYJ59830LTz/P4aQZK1sS0SneOgAvhsIl3zBu8r9RevNg5lHCHAuQ/" crossorigin="anonymous"></script>
+
+    <!-- --Share PDF-- -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 
 <body>
@@ -27,15 +30,16 @@
                         <img id="logoImg">
                     </div> -->
                     <div class="text-center">
-                        <h1>شركة عبدالله محمد الزهراني للوقود</h1>
-                        <p>Jeddah, KSA  .جدة، المملكة العربية السعودية</p>
-                        <p>C.R: سجل تجاري: 4030526866</p>
-                        <p>VAT No: الر قم الضريبي: 311837254300003</p>
+                        <input type="text" name="com-name" id="com-name" value="شركة عبدالله محمد الزهراني للوقود">
+                        <input type="text" name="com-addres" id="com-addres" value="Jeddah, KSA  جدة، المملكة العربية السعودية">
+                        <!-- <input type="text" name="com-phone" id="com-phone" value="Phone: 0123456789  هاتف: 0123456789"> -->
+                        <input type="text" name="com-cr" id="com-cr" value="C.R: سجل تجاري: 4030526866">
+                        <input type="text" name="com-vat" id="com-vat" value="VAT No: الر قم الضريبي: 311837254300003">
                     </div>
                 </div>
                 <div class="invoice-title">
-                    <h2>VAT INVOICE</h2>
-                    <h3>فاتورة ضريبية</h3>
+                    <h2>فاتورة ضريبية</h2>
+                    <h3>VAT INVOICE</h3>
                 </div>
             </div>
 
@@ -62,7 +66,9 @@
                     </div>
                     <div class="form-group">
                         <label for="invoiceDate">Invoice Date / تاريخ الفاتورة</label>
+
                         <input type="datetime-local" id="invoiceDate">
+
                         <!-- <input type="date" id="invoiceDate">  -->
                         
                         
@@ -162,20 +168,29 @@
                     <option value="Saiful">Saiful</option>
                     <option value="Ahmed">Ahmed</option>
                 </select>
-                <button class="btn btn-outline" id="generateQRBtn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="icon">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                        <rect x="8" y="8" width="8" height="8"></rect>
-                        <line x1="12" y1="3" x2="12" y2="8"></line>
-                        <line x1="3" y1="12" x2="8" y2="12"></line>
-                        <line x1="12" y1="16" x2="12" y2="21"></line>
-                        <line x1="16" y1="12" x2="21" y2="12"></line>
-                    </svg>
-                    Generate QR Code
-                </button>
             </div>
+            <button class="btn btn-outline" id="generateQRBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <rect x="8" y="8" width="8" height="8"></rect>
+                    <line x1="12" y1="3" x2="12" y2="8"></line>
+                    <line x1="3" y1="12" x2="8" y2="12"></line>
+                    <line x1="12" y1="16" x2="12" y2="21"></line>
+                    <line x1="16" y1="12" x2="21" y2="12"></line>
+                </svg>
+                Generate QR Code
+            </button>
+            <button class="btn btn-outline" onclick="exportAndSend()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                    <circle cx="18" cy="5" r="3" />
+                    <circle cx="6" cy="12" r="3" />
+                    <circle cx="18" cy="19" r="3" />
+                    <path d="M8.59 13.51l6.83 3.98" />
+                    <path d="M15.41 6.51l-6.82 3.98" />
+                </svg>
+                Send Invoice</button>
         </div>
     </div>
 
@@ -186,4 +201,21 @@
             Mamun Hossen</a></p>
 </footer>
 
+
+<script>
+    //-----------Time and Date--------------
+    document.addEventListener('DOMContentLoaded', () => {
+        const input = document.getElementById('invoiceDate');
+        const now = new Date();
+
+        // Format date/time components with leading zeros
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        input.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    });
+</script>
 </html>

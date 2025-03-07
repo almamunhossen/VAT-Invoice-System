@@ -123,14 +123,21 @@ function updateItemAmount(id) {
 // }
 
 function calculateTotals() {
-  // Total is 100 SR (including VAT)
-  const total = 100;
+  let subtotal = 0;
 
-  // Calculate subtotal (NET price)
-  const subtotal = total / 1.15; // Subtotal = Total / (1 + VAT rate)
+  // Sum all item amounts (these are GROSS amounts including VAT)
+  document.querySelectorAll(".item-amount").forEach((input) => {
+    const grossAmount = Number.parseFloat(input.value) || 0; // Get the gross amount (including VAT)
+    const vat = grossAmount * (15 / 115); // Calculate VAT (15% of the NET price)
+    const netAmount = grossAmount - vat; // Subtract VAT to get the NET price
+    subtotal += netAmount; // Add the NET price to the subtotal
+  });
 
-  // Calculate VAT (15% of subtotal)
+  // Calculate VAT (15% of the subtotal)
   const vat = subtotal * 0.15;
+
+  // Calculate total (subtotal + VAT)
+  const total = subtotal + vat;
 
   // Update display
   document.getElementById("subtotal").textContent = subtotal.toFixed(2);

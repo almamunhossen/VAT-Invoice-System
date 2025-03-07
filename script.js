@@ -122,6 +122,8 @@ function calculateTotals() {
   document.getElementById("total").textContent = total.toFixed(2);
 }
 
+
+
 // TLV encoding for QR code
 function encodeTLV(tag, value) {
   const encodedTag = String.fromCharCode(tag);
@@ -181,7 +183,7 @@ function exportToPDF() {
 
   const numberInputs = element.querySelectorAll('input[type="number"]');
   numberInputs.forEach(input => {
-    input.style.appearance = "textfield"; 
+    input.style.appearance = "textfield";
   });
 
 
@@ -251,17 +253,136 @@ function exportToPDF() {
 
 
 // ---------------head Logo------------
-// Get the current date and time
-const now = new Date();
 
-// Format the date and time to YYYY-MM-DDTHH:MM
-const year = now.getFullYear();
-const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-const day = String(now.getDate()).padStart(2, '0');
-const hours = String(now.getHours()).padStart(2, '0');
-const minutes = String(now.getMinutes()).padStart(2, '0');
+const logoDiv = document.getElementById("logo");
+const logoImg = document.getElementById("logoImg");
 
-const formattedDateTime = `${year}-${month}-${day}T${hours}:${minutes}`;
+// Function to load saved image from LocalStorage
+function loadSavedLogo() {
+  const savedLogo = localStorage.getItem("logoImage");
+  if (savedLogo) {
+    logoImg.src = savedLogo;
+    logoImg.style.display = "block"; // Show saved image
+    logoDiv.querySelector("span").style.display = "none"; // Hide text
+  }
+}
 
-// Set the value of the input element
-document.getElementById('invoiceDate').value = formattedDateTime;
+// Load saved logo on page load
+window.onload = loadSavedLogo;
+
+// Drag & Drop events
+logoDiv.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  logoDiv.style.borderColor = "blue";
+});
+
+logoDiv.addEventListener("dragleave", () => {
+  logoDiv.style.borderColor = "#ccc";
+});
+
+logoDiv.addEventListener("drop", (e) => {
+  e.preventDefault();
+  logoDiv.style.borderColor = "#ccc";
+
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith("image/")) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      const imageData = event.target.result;
+      logoImg.src = imageData;
+      logoImg.style.display = "block";
+      logoDiv.querySelector("span").style.display = "none";
+
+      // Save image in LocalStorage
+      localStorage.setItem("logoImage", imageData);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    alert("Please drop a valid image file.");
+  }
+});
+
+
+// ---------File Share PDF-------------//
+async function exportAndSend() {
+  try {
+    const invoiceElement = document.getElementById("invoice");
+    const invoiceNumber =
+      document.getElementById("invoiceNumber")?.value || "Invoice";
+
+    // Hide no-print elements
+    const noPrintElements = invoiceElement.querySelectorAll(".no-print");
+    noPrintElements.forEach((el) => (el.style.display = "none"));
+
+    // Hide buttons
+    const buttons = invoiceElement.querySelectorAll(
+      ".btn-outline, .btn-danger"
+    );
+    buttons.forEach((button) => (button.style.visibility = "hidden"));
+
+    // Convert textareas to divs
+    const textareas = invoiceElement.querySelectorAll("textarea");
+    const replacements = [];
+    textareas.forEach((textarea) => {
+      const div = document.createElement("div");
+      div.textContent = textarea.value;
+      div.style.cssText = `white-space: pre-wrap; word-wrap: break-word; width: ${textarea.offsetWidth}px; min-height: ${textarea.scrollHeight}px;`;
+      textarea.style.display = "none";
+      textarea.parentNode.insertBefore(div, textarea);
+      replacements.push({ textarea, div });
+    });
+
+    // Generate PDF using html2canvas and jsPDF
+    const canvas = await html2canvas(invoiceElement, {
+      scale: 1.5,
+      useCORS: true,
+    });
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jspdf.jsPDF("p", "mm", "a4");
+
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+    // Convert PDF to Blob
+    const pdfBlob = pdf.output("blob");
+    const pdfFile = new File([pdfBlob], `${invoiceNumber}.pdf`, {
+      type: "application/pdf",
+    });
+
+    // Restore original UI state
+    buttons.forEach((button) => (button.style.visibility = "visible"));
+    noPrintElements.forEach((el) => (el.style.display = ""));
+    replacements.forEach(({ textarea, div }) => {
+      textarea.style.display = "";
+      div.remove();
+    });
+
+    // Web Share API (Mobile Support)
+    if (navigator.share && navigator.canShare({ files: [pdfFile] })) {
+      await navigator.share({
+        title: "Invoice",
+        text: "Here is your invoice:",
+        files: [pdfFile],
+      });
+    } else {
+      // Fallback: Generate WhatsApp Web Link
+      const pdfUrl = URL.createObjectURL(pdfFile);
+      const message = encodeURIComponent("Here's your invoice:");
+      window.open(
+        `https://web.whatsapp.com/send?text=${message}%0a${pdfUrl}`,
+        "_blank"
+      );
+
+      // Fallback: Allow manual download
+      const link = document.createElement("a");
+      link.href = pdfUrl;
+      link.download = `${invoiceNumber}.pdf`;
+      link.click();
+      alert("PDF downloaded. Please attach it to WhatsApp manually.");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Error exporting or sharing invoice. Please try again.");
+  }
+}

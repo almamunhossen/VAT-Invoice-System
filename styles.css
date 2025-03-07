@@ -9,13 +9,14 @@
   --foreground: #0f172a;
   --muted: #f1f5f9;
   --muted-foreground: #64748b;
-  --border: #e2e8f0;
-  --input: #e2e8f0;
+  --border: #d1d5db;
+  --input: #dee1e5;
   --radius: 0.5rem;
   --card: #ffffff;
   --card-foreground: #0f172a;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
+  --btn-outline:#a2ff0078;
 }
 
 * {
@@ -104,6 +105,30 @@ body {
   left: 0;
 }
 
+input#com-name {
+  font-size: 22px;
+  font-weight: 700;
+  /* width: 180%; */
+}
+#com-name,
+#com-addres,
+#com-phone,
+#com-cr,
+#com-vat {
+  border: none ;
+  outline-style: none ;
+  border-radius: 0px;
+}
+
+
+#com-name:hover,
+#com-phone:hover,
+#com-cr:hover,
+#com-addres:hover,
+#com-vat:hover {
+  border-bottom: 1px solid var(--border);
+}
+
 .company-info h1 {
   font-size: 1.5rem;
   font-weight: 700;
@@ -117,6 +142,7 @@ body {
 
 .invoice-title {
   text-align: center;
+  width:40%;
 }
 
 .invoice-title h2 {
@@ -126,7 +152,7 @@ body {
 }
 
 .invoice-title h3 {
-  font-size: 1.25rem;
+  font-size: 1.37rem;
   font-weight: 700;
   color: var(--muted-foreground);
 }
@@ -222,6 +248,20 @@ td {
   max-width: 200px; /* Adjust the width as needed */
 }
 
+/*----Date time-*/
+ /* Style the input field */
+ input[type="datetime-local"] {
+   padding: 8px;
+   border: 1px solid #ccc;
+   border-radius: 4px;
+ }
+
+ /* Hide the default calendar picker (browser-specific) */
+ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+   background-color: #fff;
+   cursor: pointer;
+ }
+
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -252,7 +292,7 @@ td {
 }
 
 .btn-outline {
-  background-color: transparent;
+  background-color: var(--btn-outline);
   color: var(--foreground);
   border: 1px solid var(--border);
 }
@@ -300,15 +340,18 @@ td {
 }
 
 button#generateQRBtn {
-  width: 110%;
   margin-left: 7px;
 }
+
 .seller-select {
   display: flex;
+    justify-content: center;
+    width: 25%;
 }
 .seller-select label {
-  width: 107%;
-  padding-top: 16px;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
 }
 
 .totals-card {

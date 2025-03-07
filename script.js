@@ -104,24 +104,39 @@ function updateItemAmount(id) {
   calculateTotals();
 }
 
-// Calculate subtotal, VAT, and total
+// // Calculate subtotal, VAT, and total
+// function calculateTotals() {
+//   let subtotal = 0;
+
+//   // Sum up all item amounts
+//   document.querySelectorAll(".item-amount").forEach((input) => {
+//     subtotal += Number.parseFloat(input.value) || 0;
+//   });
+
+//   const vat = subtotal * 0.15;
+//   const total = subtotal + vat;
+
+//   // Update the display
+//   document.getElementById("subtotal").textContent = subtotal.toFixed(2);
+//   document.getElementById("vat").textContent = vat.toFixed(2);
+//   document.getElementById("total").textContent = total.toFixed(2);
+// }
+
 function calculateTotals() {
-  let subtotal = 0;
+  // Total is 100 SR (including VAT)
+  const total = 100;
 
-  // Sum up all item amounts
-  document.querySelectorAll(".item-amount").forEach((input) => {
-    subtotal += Number.parseFloat(input.value) || 0;
-  });
+  // Calculate subtotal (NET price)
+  const subtotal = total / 1.15; // Subtotal = Total / (1 + VAT rate)
 
+  // Calculate VAT (15% of subtotal)
   const vat = subtotal * 0.15;
-  const total = subtotal + vat;
 
-  // Update the display
+  // Update display
   document.getElementById("subtotal").textContent = subtotal.toFixed(2);
   document.getElementById("vat").textContent = vat.toFixed(2);
   document.getElementById("total").textContent = total.toFixed(2);
 }
-
 
 
 // TLV encoding for QR code

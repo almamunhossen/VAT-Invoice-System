@@ -1,4 +1,3 @@
-# VAT-Invoice-System
 # VAT Invoice System
 
 A complete VAT invoice management system with:

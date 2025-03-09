@@ -104,23 +104,23 @@ function updateItemAmount(id) {
   calculateTotals();
 }
 
-// // Calculate subtotal, VAT, and total
-// function calculateTotals() {
-//   let subtotal = 0;
+// Calculate subtotal, VAT, and total
+function calculateTotals() {
+  let subtotal = 0;
 
-//   // Sum up all item amounts
-//   document.querySelectorAll(".item-amount").forEach((input) => {
-//     subtotal += Number.parseFloat(input.value) || 0;
-//   });
+  // Sum up all item amounts
+  document.querySelectorAll(".item-amount").forEach((input) => {
+    subtotal += Number.parseFloat(input.value) || 0;
+  });
 
-//   const vat = subtotal * 0.15;
-//   const total = subtotal + vat;
+  const vat = subtotal * 0.15;
+  const total = subtotal + vat;
 
-//   // Update the display
-//   document.getElementById("subtotal").textContent = subtotal.toFixed(2);
-//   document.getElementById("vat").textContent = vat.toFixed(2);
-//   document.getElementById("total").textContent = total.toFixed(2);
-// }
+  // Update the display
+  document.getElementById("subtotal").textContent = subtotal.toFixed(2);
+  document.getElementById("vat").textContent = vat.toFixed(2);
+  document.getElementById("total").textContent = total.toFixed(2);
+}
 
 //--------------Incoled VAT Calculate--------------//
 
@@ -159,45 +159,45 @@ function updateItemAmount(id) {
 // }
 
 //-----------------------------------------------------------------------------------------
-function calculateTotals() {
-  let subtotal = 0;
+// function calculateTotals() {
+//   let subtotal = 0;
 
-  const formatOptions = {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-    useGrouping: true,
-  };
+//   const formatOptions = {
+//     minimumFractionDigits: 2,
+//     maximumFractionDigits: 2,
+//     useGrouping: true,
+//   };
 
-   // SVG template for currency symbol
-  const currencySVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1124.1 1256.4" width="15" height="15"><path d="M699.6 1113a459.43 459.43 0 0 0-38.4 143.4l424.5-90.2c20.1-44.5 33.3-92.7 38.4-143.4L699.6 1113zm386.1-217.2c20.1-44.5 33.3-92.7 38.4-143.4l-330.7 70.3V687.6l292.3-62.1c20.1-44.5 33.3-92.7 38.4-143.4l-330.7 70.3V66.1a465.36 465.36 0 0 0-132.3 111v403.4L529 608.6V0a465.36 465.36 0 0 0-132.3 111v525.7L101 698.6a467.04 467.04 0 0 0-38.6 144.3l334.3-71v170.3l-358.3 97.1C18.3 1062.8 5.1 1111 0 1161.7l375-79.7c30.5-6.3 56.8-24.4 73.8-49.2l68.8-102a66.25 66.25 0 0 0 11.3-37v-150l132.3-28.1v270.4l424.5-90.3z"/></svg>';
+//    // SVG template for currency symbol
+//   const currencySVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1124.1 1256.4" width="15" height="15"><path d="M699.6 1113a459.43 459.43 0 0 0-38.4 143.4l424.5-90.2c20.1-44.5 33.3-92.7 38.4-143.4L699.6 1113zm386.1-217.2c20.1-44.5 33.3-92.7 38.4-143.4l-330.7 70.3V687.6l292.3-62.1c20.1-44.5 33.3-92.7 38.4-143.4l-330.7 70.3V66.1a465.36 465.36 0 0 0-132.3 111v403.4L529 608.6V0a465.36 465.36 0 0 0-132.3 111v525.7L101 698.6a467.04 467.04 0 0 0-38.6 144.3l334.3-71v170.3l-358.3 97.1C18.3 1062.8 5.1 1111 0 1161.7l375-79.7c30.5-6.3 56.8-24.4 73.8-49.2l68.8-102a66.25 66.25 0 0 0 11.3-37v-150l132.3-28.1v270.4l424.5-90.3z"/></svg>';
 
-  // Calculate amounts
-  document.querySelectorAll(".item-amount").forEach((input) => {
-    // Normalize input by removing commas
-    const sanitizedValue = input.value.replace(/,/g, '');
-    const grossAmount = Number.parseFloat(sanitizedValue) || 0;
-    const vat = grossAmount * (15 / 115);
-    const netAmount = grossAmount - vat;
-    subtotal += netAmount;
-  });
+//   // Calculate amounts
+//   document.querySelectorAll(".item-amount").forEach((input) => {
+//     // Normalize input by removing commas
+//     const sanitizedValue = input.value.replace(/,/g, '');
+//     const grossAmount = Number.parseFloat(sanitizedValue) || 0;
+//     const vat = grossAmount * (15 / 115);
+//     const netAmount = grossAmount - vat;
+//     subtotal += netAmount;
+//   });
 
-  const totalVat = subtotal * 0.15;
-  const total = subtotal + totalVat;
+//   const totalVat = subtotal * 0.15;
+//   const total = subtotal + totalVat;
 
-  // Formatting function (extract to a helper if reused)
-  const formatCurrency = (value) => 
-    `${value.toLocaleString('en-US', formatOptions)} ${currencySVG}`;
+//   // Formatting function (extract to a helper if reused)
+//   const formatCurrency = (value) => 
+//     `${value.toLocaleString('en-US', formatOptions)} ${currencySVG}`;
 
-  // Update displays with null checks
-  const updateDisplay = (id, value) => {
-    const element = document.getElementById(id);
-    if (element) element.innerHTML = formatCurrency(value);
-  };
+//   // Update displays with null checks
+//   const updateDisplay = (id, value) => {
+//     const element = document.getElementById(id);
+//     if (element) element.innerHTML = formatCurrency(value);
+//   };
 
-  updateDisplay("subtotal", subtotal);
-  updateDisplay("vat", totalVat);
-  updateDisplay("total", total);
-}
+//   updateDisplay("subtotal", subtotal);
+//   updateDisplay("vat", totalVat);
+//   updateDisplay("total", total);
+// }
 
 // TLV encoding for QR code
 function encodeTLV(tag, value) {

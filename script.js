@@ -108,19 +108,64 @@ function updateItemAmount(id) {
 function calculateTotals() {
   let subtotal = 0;
 
-  // Sum up all item amounts
+  // Formatting options
+  const formatOptions = {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+    useGrouping: true
+  };
+
+  // Calculate amounts
   document.querySelectorAll(".item-amount").forEach((input) => {
-    subtotal += Number.parseFloat(input.value) || 0;
+    const grossAmount = Number.parseFloat(input.value) || 0;
+    const vat = grossAmount * (15 / 115);
+    const netAmount = grossAmount - vat;
+    subtotal += netAmount;
   });
 
   const vat = subtotal * 0.15;
   const total = subtotal + vat;
 
-  // Update the display
-  document.getElementById("subtotal").textContent = subtotal.toFixed(2);
-  document.getElementById("vat").textContent = vat.toFixed(2);
-  document.getElementById("total").textContent = total.toFixed(2);
+  // Update displays with formatted values
+  document.getElementById("subtotal").textContent = 
+    `${subtotal.toLocaleString('en-US', formatOptions)} SR`;
+  
+  document.getElementById("vat").textContent = 
+    `${vat.toLocaleString('en-US', formatOptions)} SR`;
+  
+  document.getElementById("total").textContent = 
+    `${total.toLocaleString('en-US', formatOptions)} SR`;
 }
+
+
+
+
+
+
+
+
+
+
+// function calculateTotals() {
+//   let subtotal = 0;
+
+//   // Sum up all item amounts
+//   document.querySelectorAll(".item-amount").forEach((input) => {
+//     subtotal += Number.parseFloat(input.value) || 0;
+//   });
+
+//   const vat = subtotal * 0.15;
+//   const total = subtotal + vat;
+
+//   // Update the display
+//   document.getElementById("subtotal").textContent = subtotal.toFixed(2);
+//   document.getElementById("vat").textContent = vat.toFixed(2);
+//   document.getElementById("total").textContent = total.toFixed(2);
+// }
+
+
+
+
 
 //--------------Incoled VAT Calculate--------------//
 

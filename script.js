@@ -128,13 +128,13 @@ function calculateTotals() {
 
   // Update displays with formatted values
   document.getElementById("subtotal").textContent = 
-    `${subtotal.toLocaleString('en-US', formatOptions)} SR`;
+    `${subtotal.toLocaleString('en-US', formatOptions)}`;
   
   document.getElementById("vat").textContent = 
-    `${vat.toLocaleString('en-US', formatOptions)} SR`;
+    `${vat.toLocaleString('en-US', formatOptions)}`;
   
   document.getElementById("total").textContent = 
-    `${total.toLocaleString('en-US', formatOptions)} SR`;
+    `${total.toLocaleString('en-US', formatOptions)}`;
 }
 
 
